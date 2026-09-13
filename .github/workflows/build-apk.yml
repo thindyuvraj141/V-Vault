@@ -1,1 +1,42 @@
+name: Build V Vault APK
 
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract V Vault project
+        run: |
+          rm -rf /tmp/vvault
+          mkdir -p /tmp/vvault
+          unzip -q V_Vault_GitHub_APK_Build_Ready.zip -d /tmp/vvault
+          cp -a /tmp/vvault/. .
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Gradle
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gradle
+
+      - name: Create Gradle wrapper
+        run: gradle wrapper --gradle-version 8.10.2
+
+      - name: Build APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: V-Vault-APK
+          path: app/build/outputs/apk/debug/*.apk
