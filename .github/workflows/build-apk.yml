@@ -31,6 +31,10 @@ jobs:
 
       - name: Create Gradle wrapper
         run: gradle wrapper --gradle-version 8.10.2
+      - name: Enable AndroidX
+        run: |
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
 
       - name: Build APK
         run: ./gradlew assembleDebug --no-daemon
